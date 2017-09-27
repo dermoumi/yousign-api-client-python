@@ -3,14 +3,10 @@ import base64
 
 
 class FileToSign(dict):
-    def __init__(self, name, visibleOptions, password, **kwargs):
+    def __init__(self, file_name, file_content_base64, visibleOptions, password, **kwargs):
         super(FileToSign, self).__init__(**kwargs)
-        dirName = "../examples/documents/"
-        f = dirName+os.path.basename(name)
-        self["name"] = os.path.basename(f)
-        with open(f, "rb") as test_file:
-            content = base64.b64encode(test_file.read())
-        self["content"] = content
+        self["name"] = file_name
+        self["content"] = file_content_base64
         self["visibleOptions"] = visibleOptions
         self["pdfPassword"] = password
 
