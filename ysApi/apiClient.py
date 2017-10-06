@@ -165,3 +165,7 @@ class ApiClient():
     "It includes all proof informations about archive : descriptive metadatas, applicative metadatas, sealing datas and the initial archive file"
     def getCompleteArchive(self,iua):
         return getattr(self._archClient.service,'getCompleteArchive')( iua = iua)
+    
+    "Update cosigner info who have not signed document(s) yet."
+    def updateCosigner(self, token, cosignerInfos):
+        return getattr(self._signClient.service,'updateCosigner')(token=token, cosignerInfos=cosignerInfos)

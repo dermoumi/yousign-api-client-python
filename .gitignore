@@ -5,3 +5,4 @@ dist
 config/config.ini
 *.py[co]
 *.sw[po]
+.env

@@ -12,7 +12,7 @@ class FileToSign(dict):
 
 
 class Signer(dict):
-    def __init__(self, firstName, lastName, phone, mail, authenticationMode="sms", **kwargs):
+    def __init__(self, firstName='', lastName='', phone='', mail='', authenticationMode='sms', **kwargs):
         super(Signer, self).__init__(**kwargs)
         self["firstName"] = firstName
         self["lastName"] = lastName
