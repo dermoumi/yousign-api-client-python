@@ -51,3 +51,4 @@ For other examples, Modify information in each of these Python, then you can run
      * archive : Archive document for 10 years with metadatas. Metadatas are used to find easily one (or several) archive.
      * getArchive : Get archive file identified by its iua
      * getCompleteArchive : Get complete archive file identified by its iua.
+     * updateCosigner : Update cosigner info who have not signed document(s) yet.
