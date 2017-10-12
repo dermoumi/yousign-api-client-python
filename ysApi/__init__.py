@@ -1,4 +1,4 @@
-from .apiClient import ApiClient
+from .apiClient import ApiClient, ApiError
 from .fileToSign import FileToSign, Signer, VisibleOptions
 
-__all__ = ['ApiClient', 'FileToSign', 'Signer', 'VisibleOptions']
+__all__ = ['ApiClient', 'ApiError', 'FileToSign', 'Signer', 'VisibleOptions']

@@ -33,5 +33,5 @@ if __name__ == "__main__":
     try :
         res = c.archive(file)
         print(res)
-    except suds.WebFault as detail:
-        print(detail)
+    except ysApi.ApiError as error:
+        print(error)

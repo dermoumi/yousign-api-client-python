@@ -21,5 +21,5 @@ if __name__ == "__main__":
    #                     "environment")
     try :
         print("Successful authentication"  if c.connect() else "Authentication failed")
-    except suds.WebFault as detail:
-        print(detail)
+    except ysApi.ApiError as error:
+        print(error)

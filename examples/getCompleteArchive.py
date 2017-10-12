@@ -27,5 +27,5 @@ if __name__ == "__main__":
         print('Archive saved in : '+os.getcwd()+'/'+pathZip)
         print('Response from Yousign API ...')
         print(res)
-    except suds.WebFault as detail:
-        print(detail)
+    except ysApi.ApiError as error:
+        print(error)

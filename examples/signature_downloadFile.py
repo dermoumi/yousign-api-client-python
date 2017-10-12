@@ -45,5 +45,5 @@ if __name__ == "__main__":
             signedFile.write(base64.b64decode(file[fileName.index(el)]))
 
             print('Signed file saved in : '+os.getcwd()+'/'+pathFile)
-    except suds.WebFault as detail:
-        print(detail)
+    except ysApi.ApiError as error:
+        print(error)

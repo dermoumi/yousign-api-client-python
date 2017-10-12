@@ -6,10 +6,39 @@ try:
 except ImportError:
     from ConfigParser import RawConfigParser as ConfigParser
 import logging
+import functools
+import re
+from suds import WebFault
 from suds.client import Client
 from suds.sax.element import Element
 
 logging.basicConfig(level=logging.FATAL)
+
+def catch_webfault_exception(f):
+    @functools.wraps(f)
+    def func(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except WebFault as error:
+            match = re.search('Error (?P<error_code>\d+) : (?P<error_message>.+)', error.fault.faultstring)
+            if not match:
+                raise
+            params = match.groupdict()
+            raise ApiError(
+                int(params.get('error_code', '0')),
+                params.get('error_message', '')
+            )
+    return func
+
+
+class ApiError(Exception):
+    def __init__(self, code, message):
+        self.code = code
+        self.message = message
+    
+    def __str__(self):
+        return 'Yousign API error {} {}'.format(self.code, self.message)
+
 
 "Here is a full Python Client for Yousign Api"
 
@@ -92,6 +121,7 @@ class ApiClient():
         apikey : your apikey
     The connect method should be used just for testing. You do not have to call it each time you want to call the API
     """""
+    @catch_webfault_exception
     def connect(self):
         return getattr(self._authClient.service, 'connect')(None)
 
@@ -99,6 +129,7 @@ class ApiClient():
     This method is used to initialize a signature process. File(s) and information about signer(s) are sent. Only one signer could be used."
     For each parameter you can see its details in the online documentation
     """
+    @catch_webfault_exception
     def initSign(self,
                   lstCosignedFile,
                   lstCosignerInfos,
@@ -127,10 +158,12 @@ class ApiClient():
     Get signed files associated with a signature process from an idDemand or a token. If the user is subscribed, you could use the idDemand parameter.
     If idFile is specified, we only get the file associated with this id (this id must be part of the signature process).
     """
+    @catch_webfault_exception
     def getSignedFilesFromDemand(self, idDemand, token='',idFile = ''):
         return getattr(self._signClient.service,'getCosignedFilesFromDemand')(idDemand = idDemand, token=token,idFile=idFile)
 
     "Get informations (status, name, file infos) about a signature process from an idDemand or a token. "
+    @catch_webfault_exception
     def getInfosFromSignatureDemand(self, idDemand, token=''):
         return getattr(self._signClient.service,'getInfosFromCosignatureDemand')(idDemand = idDemand, token=token)
 
@@ -139,6 +172,7 @@ class ApiClient():
     It includes all signature processes launched by the user and all signature processes where the user is a signer (the signature process has been launched by another user).
     Maximum results returned by this WS is 1000.
     """
+    @catch_webfault_exception
     def getListSign(self, search='', firstResult=0, count=1000, status='COSIGNATURE_EVENT_REQUEST_PENDING', dateBegin='', dateEnd=''):
         return getattr(self._signClient.service,'getListCosign')(search = search, firstResult=firstResult,count=count,status=status,dateBegin=dateBegin,dateEnd=dateEnd)
 
@@ -146,26 +180,32 @@ class ApiClient():
     Cancel a signature process which is not finished yet. Only the initiator could cancel it.
     Signers will not be able to sign documents. They will not be notified.
     """
+    @catch_webfault_exception
     def cancelSignatureDemand(self, idDemand):
         return getattr(self._signClient.service,'cancelCosignatureDemand')(idDemand = idDemand)
 
     "Alert signers who have not signed document(s) yet."
+    @catch_webfault_exception
     def alertSigners(self, idDemand, mailSubject='', mail='', language='FR'):
         return getattr(self._signClient.service,'alertCosigners')(idDemand = idDemand, mailSubject=mailSubject,mail=mail,language=language)
 
     "Archive document for 10 years with metadatas. Metadatas are used to find easily one (or several) archive."
+    @catch_webfault_exception
     def archive(self, file):
         return getattr(self._archClient.service,'archive')( file = file)
 
     "Get archive file identified by its iua"
+    @catch_webfault_exception
     def getArchive(self, iua):
         return getattr(self._archClient.service,'getArchive')(iua = iua)
 
     "Get complete archive file identified by its iua. "
     "It includes all proof informations about archive : descriptive metadatas, applicative metadatas, sealing datas and the initial archive file"
+    @catch_webfault_exception
     def getCompleteArchive(self,iua):
         return getattr(self._archClient.service,'getCompleteArchive')( iua = iua)
     
     "Update cosigner info who have not signed document(s) yet."
+    @catch_webfault_exception
     def updateCosigner(self, token, cosignerInfos):
         return getattr(self._signClient.service,'updateCosigner')(token=token, cosignerInfos=cosignerInfos)

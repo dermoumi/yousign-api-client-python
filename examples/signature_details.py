@@ -20,6 +20,6 @@ if __name__ == "__main__":
         res = c.getInfosFromSignatureDemand(idDemand)
         print(" Details from the signature with the id : %d" %(idDemand))
         print(res)
-    except suds.WebFault as detail:
-        print(detail)
+    except ysApi.ApiError as error:
+        print(error)
 
